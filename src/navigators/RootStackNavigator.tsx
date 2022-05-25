@@ -14,8 +14,11 @@ import MusicPlayerBar from '../components/MusicPlayerBar'
 
 // Import SVG icons
 import HomeIconSVG from '../components/SVGs/HomeIconSVG'
+import ActiveHomeIconSVG from '../components/SVGs/ActiveHomeIconSVG'
 import SearchIconSVG from '../components/SVGs/SearchIconSVG'
+import ActiveSearchIconSVG from '../components/SVGs/ActiveSearchIconSVG'
 import CommunityIconSVG from '../components/SVGs/CommunityIconSVG'
+import ActiveCommunityIconSVG from '../components/SVGs/ActiveCommunityIconSVG'
 
 import tw from '../lib/tailwind'
 
@@ -102,7 +105,8 @@ const RootTabNavigator = () => {
                      tabBarLabel: () => {
                         return null
                      },
-                     tabBarIcon: (tabInfo) => <HomeIconSVG />,
+                     tabBarIcon: ({ focused }) =>
+                        focused ? <ActiveHomeIconSVG /> : <HomeIconSVG />,
                   }}
                />
                <Tabs.Screen
@@ -112,7 +116,8 @@ const RootTabNavigator = () => {
                      tabBarLabel: () => {
                         return null
                      },
-                     tabBarIcon: (tabInfo) => <SearchIconSVG />,
+                     tabBarIcon: ({ focused }) =>
+                        focused ? <ActiveSearchIconSVG /> : <SearchIconSVG />,
                   }}
                />
                <Tabs.Screen
@@ -122,7 +127,8 @@ const RootTabNavigator = () => {
                      tabBarLabel: () => {
                         return null
                      },
-                     tabBarIcon: (tabInfo) => <CommunityIconSVG />,
+                     tabBarIcon: ({ focused }) =>
+                        focused ? <ActiveCommunityIconSVG /> : <CommunityIconSVG />,
                   }}
                />
             </Tabs.Navigator>

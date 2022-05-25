@@ -5,8 +5,8 @@ const SearchIconSVG = () => {
    return (
       <Svg
          width='27'
-         height='27'
-         viewBox='0 0 27 27'
+         height='33'
+         viewBox='0 0 27 33'
          fill='none'
          xmlns='http://www.w3.org/2000/svg'>
          <Path
