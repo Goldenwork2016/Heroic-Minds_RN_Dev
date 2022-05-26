@@ -2,7 +2,16 @@ import { ResizeMode } from 'expo-av'
 import * as React from 'react'
 import { useState, useEffect, useRef } from 'react'
 
-import { View, Text, Image, ImageBackground, ScrollView, Animated, Pressable } from 'react-native'
+import {
+   View,
+   Text,
+   Image,
+   ImageBackground,
+   ScrollView,
+   Animated,
+   Pressable,
+   Dimensions,
+} from 'react-native'
 
 import { AppContext } from '../context'
 import GoBack from './GoBack'
@@ -16,7 +25,7 @@ interface EpisodeHeaderProps {
    episode: any
    navigation: any
 }
-
+const windowWidth = Dimensions.get('window').width
 const EpisodeHeader = ({ episode, navigation }: EpisodeHeaderProps) => {
    const imageBaseURI = { uri: 'https://img.heroicminds.live/' }
 
@@ -38,20 +47,30 @@ const EpisodeHeader = ({ episode, navigation }: EpisodeHeaderProps) => {
 
          <Animated.ScrollView
             // stickyHeaderIndices={[0]}
-            style={tw.style('mx-2 ')}
-            scrollEventThrottle={1}
+            style={tw.style('mx-2')}
+            scrollEventThrottle={5}
             onScroll={Animated.event(
                [{ nativeEvent: { contentOffset: { y: scrollUpPosition } } }],
                {
                   useNativeDriver: true,
                }
             )}>
-            <Animated.View style={tw.style('h-120 w-full', styles.banner(scrollUpPosition))}>
+            <Animated.View style={[tw.style('h-77 w-full', styles.banner(scrollUpPosition))]}>
                <Animated.Image
                   source={{
                      uri: imageBaseURI.uri + episode.id + '.png',
                   }}
-                  style={tw.style('h-full w-full')}
+                  style={
+                     (styles.banner(scrollUpPosition),
+                     {
+                        width: 280,
+                        height: 280,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: 5,
+                        marginLeft: windowWidth / 2 - 150,
+                     })
+                  }
                   // style={styles.banner(scrollUpPosition)}
                />
             </Animated.View>
@@ -62,7 +81,7 @@ const EpisodeHeader = ({ episode, navigation }: EpisodeHeaderProps) => {
                {episode.title}
             </Text>
 
-            <View style={tw.style('bg-darkGrey ')}>
+            <View style={tw.style('bg-darkGrey mt-3 ')}>
                {!episode.inspiration ? (
                   <View style={tw.style('mt-2 bg-darkGrey  mx-auto flex-row ')}>
                      <View style={tw.style('mr-2')}>
@@ -99,7 +118,7 @@ const EpisodeHeader = ({ episode, navigation }: EpisodeHeaderProps) => {
                )}
             </View>
 
-            <View style={tw.style('bg-darkGrey pb-20 pt-2 ')}>
+            <View style={tw.style('bg-darkGrey pb-20 pt-2 mt-2')}>
                <EpisodeContent episode={episode} />
             </View>
          </Animated.ScrollView>
@@ -107,15 +126,13 @@ const EpisodeHeader = ({ episode, navigation }: EpisodeHeaderProps) => {
    )
 }
 
-
-
 const styles = {
    banner: (scrollUpPosition) => ({
       transform: [
          {
             translateY: scrollUpPosition.interpolate({
-               inputRange: [-100, 0, 100, 100 + 1],
-               outputRange: [2, 1, -200, -200],
+               inputRange: [-80, 0, 200, 200 + 1],
+               outputRange: [2, 1, 100, 100],
             }),
          },
          {

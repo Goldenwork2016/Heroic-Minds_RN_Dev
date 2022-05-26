@@ -62,6 +62,7 @@ const EpisodeContent = (props: EpisodeContentProps) => {
             <Text
                style={tw.style('text-lightYellow', 'text-base', {
                   fontFamily: 'Gilroy-Regular',
+                  lineHeight: 25,
                })}>
                {episode.text}
             </Text>
