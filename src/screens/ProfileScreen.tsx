@@ -20,6 +20,9 @@ const ProfileScreen = (props: any) => {
     const [modalOpen, onModalChange] = useState(false);
     const [ImagemodalOpen, onImageModalChange] = useState(false);
     const [UploadAudiomodalOpen, onUploadAudiomodalChange] = useState(false);
+    const [selectedImageUri, setImageUri] = useState<null | string>(null)
+    const [isAudioRecorded, updateAudioRecordingState] = useState(false)
+    const [recordedAudioParentUri, setRecordedAudioParentUri] = useState(null)
 
     const gotoCreatePost = () => {
         onModalChange(true)
@@ -32,26 +35,23 @@ const ProfileScreen = (props: any) => {
     const gotoUploadImageModal = () => {
         onModalChange(false)
         onImageModalChange(true)
-        onmainscreenChange(false)
+        onmainscreenChange(true)
         onUploadAudiomodalChange(false)
     }
 
     const CloseUploadImageModal = () => {
-        onModalChange(true)
         onmainscreenChange(true)
         onImageModalChange(false)
     }
 
     const gotoUploadAudioModal = () => {
-        console.log('PROFILE SCREEN')
         onModalChange(false)
-        onmainscreenChange(false)
+        onmainscreenChange(true)
         onUploadAudiomodalChange(true)
         onImageModalChange(false)
     }
 
     const CloseUploadAudioModal = () => {
-        onModalChange(true)
         onmainscreenChange(true)
         onUploadAudiomodalChange(false)
     }
@@ -62,14 +62,37 @@ const ProfileScreen = (props: any) => {
                 <SingleWordHeader navigation={props.navigation} headerName={'Profile'} />
                 <ScrollView >
                     <ProfileDetail navigation={props.navigation} />
-                    <ProfileContent navigation={props.navigation} showEditicon={true} />
+                    <ProfileContent
+                        navigation={props.navigation}
+                        openAudioModal={gotoUploadAudioModal}
+                        openImageModal={gotoUploadImageModal}
+                        showEditIcon={true}
+                        selectedImageUri={selectedImageUri}
+                        setImageUri={setImageUri}
+                        isAudioRecorded={isAudioRecorded}
+                        updateAudioRecordingState={updateAudioRecordingState}
+                        recordedAudioParentUri={recordedAudioParentUri}
+
+
+                    />
                 </ScrollView>
                 <CreatePostModal openModal={modalOpen} closeCreatePostModal={closeCreatePostModal} gotoAudio={gotoUploadAudioModal} gotoUploadImageModal={gotoUploadImageModal} />
             </>}
             {/* <PlayAudio /> */}
-            {UploadAudiomodalOpen && <UploadAudio CloseUploadAudioModal={CloseUploadAudioModal} navigation={props.navigation} />}
+            {UploadAudiomodalOpen && <UploadAudio
+                CloseUploadAudioModal={CloseUploadAudioModal}
+                navigation={props.navigation}
+                isAudioRecorded={isAudioRecorded}
+                updateAudioRecordingState={updateAudioRecordingState}
+                setRecordedAudioParentUri={setRecordedAudioParentUri}
+            />}
             {/* <EditPostModal /> */}
-            {ImagemodalOpen && <UploadImage CloseUploadImageModal={CloseUploadImageModal} navigation={props.navigation} />}
+            {ImagemodalOpen && <UploadImage
+                CloseUploadImageModal={CloseUploadImageModal}
+                navigation={props.navigation}
+                setImageUri={setImageUri}
+                selectedImageUri={selectedImageUri}
+            />}
 
         </View>
 

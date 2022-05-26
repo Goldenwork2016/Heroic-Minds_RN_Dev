@@ -23,6 +23,10 @@ const ProfileDetail = (props: Props) => {
         props.navigation.navigate('FollowingScreen')
     }
 
+    const goToAccountSettingsScreen = () => {
+        props.navigation.navigate('Settings', { screen: 'AccountSettingScreen' })
+    }
+
     return (
         <View style={tw.style('flex-1')}>
 
@@ -66,7 +70,7 @@ const ProfileDetail = (props: Props) => {
 
                     {/* Edit Profile Btn */}
                     <View>
-                        <Pressable>
+                        <Pressable onPress={goToAccountSettingsScreen}>
                             <View
                                 style={tw.style(
                                     'absolute',

@@ -18,6 +18,8 @@ export const Modal = ({
       animationOutTiming={1000}
       backdropTransitionInTiming={800}
       backdropTransitionOutTiming={800}
+      backdropOpacity={0.5}
+      backdropColor={"black"}
       {...props}>
       {children}
     </RNModal>
@@ -44,24 +46,21 @@ const ModalFooter = ({ children }: { children?: React.ReactNode }) => (
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#E9D8A6",
     borderRadius: 25,
     // width:357,
-    borderWidth: 1,
-    // marginLeft:-10,
-    borderColor: "#000",
-    borderStyle: "solid",
+    marginHorizontal: 30,
   },
   header: {
     alignItems: "center",
     justifyContent: "center",
-   // fontSize:15
+    // fontSize:15
   },
   text: {
     paddingTop: 10,
     textAlign: "center",
     fontSize: 18,
-    
+
   },
   body: {
     justifyContent: "center",
@@ -70,23 +69,23 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    color:'red',
+    color: 'red',
     padding: 10,
     flexDirection: "row",
     // backgroundColor:'#333333',
     // width:80,
     // height:35,
-    alignSelf:'center',
+    alignSelf: 'center',
     //borderWidth:2,
-    borderRadius:50
+    borderRadius: 50
     //alignItems:'center'
   },
 
-  title:{
-    color:'#fff',
-   
+  title: {
+    color: '#fff',
+
   }
-  
+
 });
 
 Modal.Header = ModalHeader;

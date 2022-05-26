@@ -9,6 +9,8 @@ import {
    Dimensions,
    TouchableOpacity,
    TextInput,
+   Image,
+   Platform
 } from 'react-native'
 import tw from '../lib/tailwind'
 import { Ionicons } from '@expo/vector-icons'
@@ -24,18 +26,26 @@ import AudioIconSVG from './SVGs/AudioIconSVG'
 import GalleryIconSVG from './SVGs/GalleryIconSVG'
 import SinglePostHeader from './SinglePostHeader'
 import SinglePostTopBody from './SinglePostTopBody'
+import SmallCrossIconSVG from './SVGs/SmallCrossSVG'
+import SelectedAudioIconSVG from './SVGs/SelectedAudioIconSVG'
 
-type PostScreenNavigationProps = {
-   PostDetail: any
-   CommentScreen: any
-   EditPost: any
-   DeletePost: any
+type Props = {
+   openAudioModal: () => void
+   openImageModal: () => void
+   navigation: any
    showEditIcon: Boolean
+   setImageUri: Function
+   selectedImageUri: null | string
+   isAudioRecorded: Boolean
+   updateAudioRecordingState: Function
+
+   //Prop Set when Audio is Saved from PlayAudio Modal
+   recordedAudioParentUri: String | null
 }
 
+
 const ProfileContent = (
-   props: any,
-   { navigation }: NativeStackScreenProps<PostScreenNavigationProps>
+   props: Props
 ) => {
    const [showEditPopup, onshowEditPopupChange] = useState(false)
 
@@ -64,6 +74,22 @@ const ProfileContent = (
    const goToDeletePost = () => {
       onshowEditPopupChange(false)
       props.navigation.navigate('DeletePost')
+   }
+
+   const _openAudioModal = () => {
+      props.openAudioModal()
+   }
+
+   const _openImageModal = () => {
+      props.openImageModal()
+   }
+
+   const _clearImageUri = () => {
+      props.setImageUri(null)
+   }
+
+   const _clearAudioRecording = () => {
+      props.updateAudioRecordingState(false)
    }
 
 
@@ -109,17 +135,62 @@ const ProfileContent = (
    const CreatePostFooter = () => {
       return (
 
-         <View style={tw.style('flex-row h-10 ')}>
-            <View style={tw.style('flex-1 flex-row justify-between')}>
-               <View style={tw.style('flex-row items-end mb-1')}>
-                  <View style={tw.style('ml-4 mr-8')}>
-                     <AudioIconSVG />
+         <View style={tw.style('flex-row')}>
+            <View style={tw.style('flex-1 flex-row justify-between items-end mb-2')}>
+               <View style={tw.style('flex-row flex-1 items-end')}>
+                  {
+                     props.isAudioRecorded ?
+                        <View style={tw.style('mx-2')}>
+                           <SelectedAudioIconSVG />
+                           <View
+                              style={tw.style(`absolute 
+                              ${Platform.OS == 'android' ? 'right--1 top--1' : 'right-0 top-0'}`,
+                                 {
+                                    shadowColor: '#000',
+                                    shadowOffset: { width: 0, height: 1 },
+                                    shadowOpacity: 0.8,
+                                    shadowRadius: 1,
+                                    elevation: 5,
 
-                  </View>
-                  <View>
-                     <GalleryIconSVG />
+                                 })}
+                           >
+                              <Pressable hitSlop={5} onPress={_clearAudioRecording}>
+                                 <SmallCrossIconSVG />
+                              </Pressable>
+                           </View>
+                        </View>
+                        :
 
-                  </View>
+                        <Pressable hitSlop={5} onPress={_openAudioModal}>
+                           <View style={tw.style('ml-4 mr-8')}>
+                              <AudioIconSVG />
+                           </View>
+                        </Pressable>
+                  }
+                  {!props.selectedImageUri ?
+                     <Pressable hitSlop={5} onPress={_openImageModal}>
+                        <View>
+                           <GalleryIconSVG />
+                        </View>
+                     </Pressable>
+                     :
+                     <View style={tw.style('')}>
+                        <Image
+                           source={{ uri: props.selectedImageUri }}
+                           style={tw.style('rounded-lg', {
+                              width: 71, height: 57
+                           })}
+                           resizeMode='cover'
+                        />
+                        <View style={tw.style(`absolute ${Platform.OS == 'android' ? 'top--2 right--1' : 'top--1 right--1'}`)}>
+                           <Pressable hitSlop={5} onPress={_clearImageUri}>
+                              <SmallCrossIconSVG />
+                           </Pressable>
+                        </View>
+                     </View>
+                  }
+
+
                </View>
                <View style={tw.style('flex-row items-center mr-1')}>
                   <Pressable
@@ -157,7 +228,7 @@ const ProfileContent = (
                <View style={tw.style('flex-1 border border-lightYellow rounded-2xl')}>
 
                   <CreatePostTopHeader />
-                  <View style={tw.style('flex-row flex-1 ')}>
+                  <View style={tw.style('flex-row flex-1 items-start ')}>
                      <TextInput
                         autoCapitalize='sentences'
                         keyboardType='default'

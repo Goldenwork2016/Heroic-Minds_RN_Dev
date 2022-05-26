@@ -25,17 +25,14 @@ import GalleryIconSVG from './SVGs/GalleryIconSVG'
 import SinglePostHeader from './SinglePostHeader'
 import SinglePostTopBody from './SinglePostTopBody'
 
-type PostScreenNavigationProps = {
-   PostDetail: any
-   CommentScreen: any
-   EditPost: any
-   DeletePost: any
+
+interface Props {
+   navigation: any
    showEditIcon: Boolean
 }
 
 const CommunityPosts = (
-   props: any,
-   { navigation }: NativeStackScreenProps<PostScreenNavigationProps>
+   props: Props,
 ) => {
    const [showEditPopup, onshowEditPopupChange] = useState(false)
 
