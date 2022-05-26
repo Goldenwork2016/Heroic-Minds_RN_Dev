@@ -11,6 +11,7 @@ import {
    Button,
    Dimensions,
    KeyboardAvoidingView,
+   ActivityIndicator,
 } from 'react-native'
 import { Keyboard } from 'react-native'
 import tw from '../lib/tailwind'
@@ -25,9 +26,9 @@ import { useToast } from 'react-native-styled-toast'
 import { useTogglePasswordVisibility } from '../hooks/useTogglePasswordVisibility'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-
 const LoginScreen = ({ navigation }: NativeStackScreenProps<{ Registration: any }>) => {
    const { user, setUser } = React.useContext(AuthContext)
+   const [isLoading, setIsLoading] = React.useState(false)
    const { toast } = useToast()
 
    const [checked, onCheckChange] = useState(false)
@@ -43,7 +44,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<{ Registration: any 
 
    const displayErrorToast = () => {
       return toast({
-         message: 'Username or password incorrect',
+         message: 'Incorrect username or password',
          color: 'error',
          hideIcon: true,
          hideAccent: true,
@@ -51,13 +52,15 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<{ Registration: any 
    }
 
    const onLoginButtonPress = async () => {
+      setIsLoading(true)
       signIn({ email, password })
          .then((res) => {
-             setUser(res)
+            setUser(res)
          })
          .catch((err) => {
-            console.log(err)
+            console.log('error type', err.message)
             displayErrorToast()
+            setIsLoading(false)
          })
    }
 
@@ -73,10 +76,9 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<{ Registration: any 
    const scrollViewStyle = tw.style('mx-5', 'flex-1')
 
    return (
-      <SafeAreaView style={tw.style('flex-1',)}>
+      <SafeAreaView style={tw.style('flex-1')}>
          <View style={tw.style('mx-5 flex-1 ')}>
-            <KeyboardAwareScrollView contentContainerStyle={{ flex: 1, }} >
-
+            <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }}>
                <View onStartShouldSetResponder={() => true} style={tw`flex-1 `}>
                   <View style={tw`justify-center flex-6 `}>
                      <LoginHeader />
@@ -95,10 +97,18 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<{ Registration: any 
                            keyboardType='email-address'
                            returnKeyType='next'
                            onChangeText={setEmail}
-                           style={tw.style('border', 'border-solid', 'rounded-lg', 'h-10', 'pl-4', 'text-lightYellow', {
-                              backgroundColor: 'rgba(112, 115, 128, 0.08)',
-                              borderColor: 'rgba(112, 115, 128, 0.2)',
-                           })}
+                           style={tw.style(
+                              'border',
+                              'border-solid',
+                              'rounded-lg',
+                              'h-10',
+                              'pl-4',
+                              'text-lightYellow',
+                              {
+                                 backgroundColor: 'rgba(112, 115, 128, 0.08)',
+                                 borderColor: 'rgba(112, 115, 128, 0.2)',
+                              }
+                           )}
                         />
                      </View>
 
@@ -121,7 +131,11 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<{ Registration: any 
                               returnKeyType='done'
                            />
                            <Pressable onPress={handlePasswordVisibility}>
-                              <Ionicons name={rightIcon} size={22} style={tw.style('text-lightYellow')} />
+                              <Ionicons
+                                 name={rightIcon}
+                                 size={22}
+                                 style={tw.style('text-lightYellow')}
+                              />
                            </Pressable>
                         </View>
                      </View>
@@ -152,26 +166,43 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<{ Registration: any 
         </View> */}
 
                      <View style={tw.style(`mt-6`, 'w-2/5', 'mx-auto')}>
-                        <Pressable
-                           style={tw.style(
-                              'items-center',
-                              'justify-center',
-                              'py-3',
-                              'px-8',
-                              'rounded-lg',
-                              'bg-lightYellow',
-                              {
-                                 fontFamily: 'Gilroy-Regular',
-                              }
-                           )}
-                           onPress={onLoginButtonPress}>
-                           <Text
-                              style={tw.style('text-base', 'text-darkGrey', {
-                                 fontFamily: 'Gilroy-SemiBold',
-                              })}>
-                              Login
-                           </Text>
-                        </Pressable>
+                        {isLoading === true ? (
+                           <Pressable
+                              style={tw.style(
+                                 'items-center',
+                                 'justify-center',
+                                 'py-3',
+                                 'px-8',
+                                 'rounded-lg',
+                                 'bg-lightYellow',
+                                 {
+                                    fontFamily: 'Gilroy-Regular',
+                                 }
+                              )}>
+                              <ActivityIndicator size='small' color='#000000' />
+                           </Pressable>
+                        ) : (
+                           <Pressable
+                              style={tw.style(
+                                 'items-center',
+                                 'justify-center',
+                                 'py-3',
+                                 'px-8',
+                                 'rounded-lg',
+                                 'bg-lightYellow',
+                                 {
+                                    fontFamily: 'Gilroy-Regular',
+                                 }
+                              )}
+                              onPress={onLoginButtonPress}>
+                              <Text
+                                 style={tw.style('text-base', 'text-darkGrey', {
+                                    fontFamily: 'Gilroy-SemiBold',
+                                 })}>
+                                 Login
+                              </Text>
+                           </Pressable>
+                        )}
                      </View>
 
                      {/* TODO: OLD Comments -> Should be removed if not required anymore */}
@@ -197,16 +228,17 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<{ Registration: any 
                               fontWeight: 'bold',
                            })}>
                            Don't have an account?{' '}
-                           <Text style={tw.style({ textDecorationLine: 'underline' })}>Sign up</Text>
+                           <Text style={tw.style({ textDecorationLine: 'underline' })}>
+                              Sign up
+                           </Text>
                         </Text>
                      </Pressable>
                   </View>
                   <StatusBar style={'light'} />
                </View>
             </KeyboardAwareScrollView>
-
          </View>
-      </SafeAreaView >
+      </SafeAreaView>
    )
 }
 

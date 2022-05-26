@@ -4,12 +4,16 @@ import { Text, TextInput, View, Pressable } from 'react-native'
 import { changePassword } from '../hooks/useAuth'
 import tw from '../lib/tailwind'
 import { useToast } from 'react-native-styled-toast'
+import { useTogglePasswordVisibility } from '../hooks/useTogglePasswordVisibility'
+import { Ionicons } from '@expo/vector-icons'
 
 const ChangePasswordContent = () => {
    const [oldPassword, setOldPassword] = React.useState('')
    const [newPassword, setNewPassword] = React.useState('')
    const [confirmPassword, setConfirmPassword] = React.useState('')
    const { toast } = useToast()
+
+   const { passwordVisibility, rightIcon, handlePasswordVisibility } = useTogglePasswordVisibility()
 
    const onChangePasswordButtonPress = () => {
       Auth.currentAuthenticatedUser().then((user) => {
@@ -19,6 +23,7 @@ const ChangePasswordContent = () => {
             })
             .catch((err) => {
                displayErrorToast()
+               console.log('catch', err)
             })
       })
    }
@@ -47,18 +52,20 @@ const ChangePasswordContent = () => {
                   Old Password
                </Text>
                <TextInput
-                  secureTextEntry={true}
+                  secureTextEntry={passwordVisibility}
                   onChangeText={setOldPassword}
-                  style={tw.style('rounded-lg', 'h-10', 'pl-4',
-                     'text-lightYellow',
-                     {
-                        //Applying in RGB to specify the opacity only on Input field background
-                        backgroundColor: 'rgba(233,216,166,0.1)',
-                        borderColor: 'rgba(233,216,166,0.1)'
-
-                     })}
+                  style={tw.style('rounded-lg', 'h-10', 'pl-4', 'text-lightYellow', {
+                     //Applying in RGB to specify the opacity only on Input field background
+                     backgroundColor: 'rgba(233,216,166,0.1)',
+                     borderColor: 'rgba(233,216,166,0.1)',
+                  })}
                   returnKeyType='done'
                />
+               <Pressable
+                  onPress={handlePasswordVisibility}
+                  style={{ position: 'absolute', top: 32, right: 15 }}>
+                  <Ionicons name={rightIcon} size={22} style={tw.style('text-lightYellow')} />
+               </Pressable>
             </View>
             <View style={tw`mt-4`}>
                <Text
@@ -68,16 +75,20 @@ const ChangePasswordContent = () => {
                   New Password
                </Text>
                <TextInput
-                  secureTextEntry={true}
+                  secureTextEntry={passwordVisibility}
                   onChangeText={setNewPassword}
-                  style={tw.style('rounded-lg', 'h-10', 'pl-4',
-                     'text-lightYellow', {
+                  style={tw.style('rounded-lg', 'h-10', 'pl-4', 'text-lightYellow', {
                      //Applying in RGB to specify the opacity only on Input field background
                      backgroundColor: 'rgba(233,216,166,0.1)',
-                     borderColor: 'rgba(233,216,166,0.1)'
+                     borderColor: 'rgba(233,216,166,0.1)',
                   })}
                   returnKeyType='done'
                />
+               <Pressable
+                  onPress={handlePasswordVisibility}
+                  style={{ position: 'absolute', top: 32, right: 15 }}>
+                  <Ionicons name={rightIcon} size={22} style={tw.style('text-lightYellow')} />
+               </Pressable>
             </View>
 
             <View style={tw`mt-4`}>
@@ -88,24 +99,37 @@ const ChangePasswordContent = () => {
                   Confirm New Password
                </Text>
                <TextInput
-                  secureTextEntry={true}
+                  secureTextEntry={passwordVisibility}
                   onChangeText={setConfirmPassword}
                   style={tw.style('rounded-lg', 'h-10', 'pl-4', 'text-lightYellow', {
                      //Applying in RGB to specify the opacity only on Input field background
                      backgroundColor: 'rgba(233,216,166,0.1)',
-                     borderColor: 'rgba(233,216,166,1)'
+                     borderColor: 'rgba(233,216,166,1)',
                   })}
                   returnKeyType='done'
                />
-
+               <Pressable
+                  onPress={handlePasswordVisibility}
+                  style={{ position: 'absolute', top: 32, right: 15 }}>
+                  <Ionicons name={rightIcon} size={22} style={tw.style('text-lightYellow')} />
+               </Pressable>
             </View>
          </View>
          <View style={tw.style(` flex-1 justify-end mb-4a`)}>
             <Pressable
-               style={tw.style('items-center', 'justify-end',
-                  'mx-auto', 'py-2', 'w-28', 'rounded-lg', 'border', 'border-lightYellow', {
-                  fontFamily: 'Gilroy-Regular',
-               })}
+               style={tw.style(
+                  'items-center',
+                  'justify-end',
+                  'mx-auto',
+                  'py-2',
+                  'w-28',
+                  'rounded-lg',
+                  'border',
+                  'border-lightYellow',
+                  {
+                     fontFamily: 'Gilroy-Regular',
+                  }
+               )}
                onPress={onChangePasswordButtonPress}>
                <Text
                   style={tw.style('text-base', 'text-lightYellow', {
