@@ -138,7 +138,7 @@ const styles = {
          {
             scale: scrollUpPosition.interpolate({
                inputRange: [-100, 0, 100, 100 + 1],
-               outputRange: [2, 1, 0.3, 0.3],
+               outputRange: [1, 1, 0.3, 0.3],
             }),
          },
       ],
