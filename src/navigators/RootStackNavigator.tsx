@@ -97,11 +97,20 @@ const RootTabNavigator = () => {
                }}
                screenOptions={{
                   headerShown: false,
+                  tabBarStyle: {
+                     borderTopColor: 'transparent',
+                     shadowColor: 'transparent',
+                     borderTopWidth: 0,
+                     elevation: 0,
+                     shadowOffset: { width: 0, height: 0 },
+                     shadowOpacity: 0,
+                  },
                }}>
                <Tabs.Screen
                   name={'HomeStack'}
                   component={HomeStackNavigator}
                   options={{
+                     tabBarStyle: { borderTopWidth: 0 },
                      tabBarLabel: () => {
                         return null
                      },
@@ -124,6 +133,7 @@ const RootTabNavigator = () => {
                   name={'CommunityStack'}
                   component={CommunityStackNavigator}
                   options={{
+                     tabBarStyle: { borderTopWidth: 4 },
                      tabBarLabel: () => {
                         return null
                      },

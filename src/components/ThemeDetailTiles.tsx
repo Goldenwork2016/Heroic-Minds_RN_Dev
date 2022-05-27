@@ -168,7 +168,7 @@ const ThemeDetailTiles = (props: ThemeDetailTilesProps) => {
                      onPress={() => {
                         onTileClick(episode)
                      }}>
-                     <View style={tw.style('mb-10')}>
+                     <View style={tw.style('mb-15')}>
                         <View style={tw.style('w-40', 'h-40')}>
                            <ImageBackground
                               source={{
@@ -184,7 +184,14 @@ const ThemeDetailTiles = (props: ThemeDetailTilesProps) => {
                                  <></>
                               )}
                            </ImageBackground>
-                           <Text style={tw.style('ml-2', 'pt-2')}>{episode.episodeTitle}</Text>
+                           <Text
+                              style={tw.style(
+                                 'ml-2',
+                                 'pt-2',
+                                 'text-lightYellow text-center text-small'
+                              )}>
+                              {episode.episodeTitle}
+                           </Text>
                         </View>
                      </View>
                   </Pressable>

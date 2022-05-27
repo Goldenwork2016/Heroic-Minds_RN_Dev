@@ -33,10 +33,14 @@ const HomeStackNavigator = ({ navigation, route }: any) => {
    React.useLayoutEffect(() => {
       const routeName = getFocusedRouteNameFromRoute(route);
       if (screensWithHiddenTab.includes(routeName!)) {
-         navigation.setOptions({ tabBarStyle: { display: 'none' } })
+         navigation.setOptions({
+            tabBarStyle: { display: 'none', borderTopWidth: 0, elevation: 0 },
+         })
       }
       else {
-         navigation.setOptions({ tabBarStyle: { display: 'flex' } })
+         navigation.setOptions({
+            tabBarStyle: { display: 'flex', borderTopWidth: 0, elevation: 0 },
+         })
       }
 
    }, [navigation, route]);
