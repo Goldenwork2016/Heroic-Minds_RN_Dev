@@ -11,6 +11,7 @@ import ImageFilters, { Constants } from 'react-native-gl-image-filters';
 import { Modal } from "./ProfileModal";
 import * as FileSystem from 'expo-file-system';
 import ProfileModalHeader from "./ProfileModalHeader";
+import * as ImageManipulator from 'expo-image-manipulator'
 
 
 interface DefaultValues {
@@ -37,7 +38,14 @@ interface Props {
 
 const UploadImage = (props: Props) => {
 
+    const [_selectedImageUri, setSelectedImageUri] = useState<string | null>(null)
+
     const goBack = () => {
+        props.CloseUploadImageModal();
+    }
+
+    const onPressContinue = () => {
+        props.setImageUri(_selectedImageUri);
         props.CloseUploadImageModal();
     }
 
@@ -47,16 +55,42 @@ const UploadImage = (props: Props) => {
 
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
+        let picked = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [16, 9],
             quality: 1,
         });
 
-        if (!result.cancelled) {
-            props.setImageUri(result.uri);
+        if (!picked.cancelled) {
+            //Android does honor the provided aspect ratio by default
+            Platform.OS == 'ios' && picked.type == 'image' ?
+                //Image will be cropped to set the specific aspec ratio for iOS
+                handleAspectRatio(picked)
+                : setSelectedImageUri(picked.uri);
         }
+    }
+
+    const handleAspectRatio = async (image: ImagePicker.ImageInfo) => {
+
+        const width = image.width
+        const aspectRatio = 16 / 9
+        const height = width / aspectRatio
+
+        const result = await ImageManipulator.manipulateAsync(image.uri, [
+            {
+                crop: {
+                    originX: 0,
+                    originY: 0,
+                    width: width,
+                    height: height
+                }
+            },
+        ],
+
+        )
+        setSelectedImageUri(result.uri);
+
     };
 
 
@@ -74,7 +108,7 @@ const UploadImage = (props: Props) => {
                                         {'Upload image or video'}</Text>
                                 </View>
                             </View>
-                            {!props.selectedImageUri && <Pressable style={tw`m-5 rounded-md `} onPress={pickImage}>
+                            {!_selectedImageUri && <Pressable style={tw`m-5 rounded-md `} onPress={pickImage}>
                                 <Ionicons
                                     style={tw.style("px-2", "text-center", "items-center", "my-10")}
                                     name="images-outline"
@@ -83,23 +117,20 @@ const UploadImage = (props: Props) => {
                                 />
                             </Pressable>}
 
-                            {props.selectedImageUri && <View style={tw.style('w-52 h-52 mx-auto mt-5 ')}>
+                            {_selectedImageUri && <View style={tw.style('w-52 h-28 mx-auto mt-5 ')}>
                                 <Pressable >
 
                                     <View >
-                                        <Image source={{ uri: props.selectedImageUri! }}
-                                            style={tw.style('w-52 h-52', {
-
-
-                                            })}
+                                        <Image source={{ uri: _selectedImageUri }}
+                                            style={tw.style('w-52 h-28 rounded-lg',)}
                                         />
                                     </View>
 
                                 </Pressable>
                             </View>}
 
-                            <TouchableOpacity onPress={goBack}
-                                disabled={!props.selectedImageUri}
+                            <TouchableOpacity onPress={onPressContinue}
+                                disabled={!_selectedImageUri}
                                 style={tw.style(
                                     "m-5",
                                     "rounded-xl",
