@@ -28,14 +28,12 @@ const HomeEpisodeSection = (props: HomeEpisodeSectionProps) => {
    return (
       <View style={tw.style('my-4')}>
          <Pressable onPress={onTitlePress}>
-            <View style={tw.style('flex-row', 'justify-start', 'w-full')}>
-               <Text
-                  style={tw.style('text-2xl mb-1 drop-shadow-sm text-lightYellow', {
-                     fontFamily: 'Gilroy-SemiBold',
-                  })}>
-                  {category}
-               </Text>
-            </View>
+            <Text
+               style={tw.style('text-xl mb-1 text-lightYellow drop-shadow-sm', {
+                  fontFamily: 'Gilroy-Medium',
+               })}>
+               {category}
+            </Text>
          </Pressable>
 
          <View style={tw.style('flex-row', 'w-screen')}>

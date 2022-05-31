@@ -11,14 +11,14 @@ interface HomeNewEpisodesContainerProps {}
 const HomeNewEpisodesContainer = (props: HomeNewEpisodesContainerProps) => {
    const { contentLoading } = React.useContext(AppContext)
    return (
-      <View style={tw.style('mt-4')}>
+      <View style={tw.style('my-4')}>
          <View style={tw.style('flex-row', 'justify-start', 'w-full')}>
             {contentLoading ? (
                <></>
             ) : (
                <Text
-                  style={tw.style('text-2xl mb-1 text-lightYellow drop-shadow-sm', {
-                     fontFamily: 'Gilroy-SemiBold',
+                  style={tw.style('text-xl mb-1 text-lightYellow drop-shadow-sm', {
+                     fontFamily: 'Gilroy-Medium',
                   })}>
                   New
                </Text>
@@ -26,7 +26,7 @@ const HomeNewEpisodesContainer = (props: HomeNewEpisodesContainerProps) => {
          </View>
 
          <View style={tw.style('flex-row', 'w-screen')}>
-            {contentLoading ? (<HomeLoadingEpisodes size={40} />) : (<HomeNewEpisodes size={40} />)}
+            {contentLoading ? <HomeLoadingEpisodes size={40} /> : <HomeNewEpisodes size={40} />}
          </View>
       </View>
    )

@@ -4,7 +4,7 @@ import { AppContext } from '../context'
 
 import tw from '../lib/tailwind'
 import SessionHeader from './SessionHeader'
-import { getJournalEntries } from '../hooks/useData'
+import { getJournalEntries, getJournalEntries2 } from '../hooks/useData'
 
 interface JournalTileProps {
    navigateToEpisodeJournal(episode: any): any
@@ -17,7 +17,7 @@ const JournalTiles = (props: JournalTileProps) => {
    const imageBaseURI = { uri: 'https://img.heroicminds.live/' }
 
    React.useEffect(() => {
-      getJournalEntries()
+      getJournalEntries2()
          .then((response) => {
             if (response.data.code === 'HM200') {
                let themesResponse = response.data.data.records

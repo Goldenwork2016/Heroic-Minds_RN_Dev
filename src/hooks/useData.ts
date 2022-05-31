@@ -131,7 +131,7 @@ export const getEpisode = async (episodeId: any) => {
 }
 
 export const getReflectionQuestion = async (episodeId: any) => {
-   const path = '/data/reflectionQuestions'
+   const path = '/data/reflectionQuestions2'
    const myInit = {
       headers: {
          'Content-Type': 'application/json',
@@ -171,8 +171,33 @@ export const updateReflectionResponse = async (reflectionArray: any) => {
    return await axios.post(baseAPI + path, data, myInit)
 }
 
+export const updateReflectionResponses = async (reflectionArray: any) => {
+   const path = '/data/updateReflectionResponses'
+   const myInit = {
+      headers: {
+         'Content-Type': 'application/json',
+         'X-Api-Key': heroicMindsAPIKey,
+         Authorization: (await Auth.currentSession()).getIdToken().getJwtToken(),
+      },
+   }
+   const data = reflectionArray
+   return await axios.post(baseAPI + path, data, myInit)
+}
+
 export const getJournalEntries = async () => {
    const path = '/data/getJournal'
+   const myInit = {
+      headers: {
+         'Content-Type': 'application/json',
+         'X-Api-Key': heroicMindsAPIKey,
+         Authorization: (await Auth.currentSession()).getIdToken().getJwtToken(),
+      },
+   }
+   return await axios.get(baseAPI + path, myInit)
+}
+
+export const getJournalEntries2 = async () => {
+   const path = '/data/getJournals'
    const myInit = {
       headers: {
          'Content-Type': 'application/json',

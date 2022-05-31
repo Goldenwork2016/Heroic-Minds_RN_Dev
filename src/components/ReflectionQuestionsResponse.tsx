@@ -7,7 +7,7 @@ import { TextInput } from 'react-native-gesture-handler'
 import { AppContext } from '../context'
 import tw from '../lib/tailwind'
 import { useToast } from 'react-native-styled-toast'
-import { updateReflectionResponse } from '../hooks/useData'
+import { updateReflectionResponse, updateReflectionResponses } from '../hooks/useData'
 import { ExpandingDot } from "react-native-animated-pagination-dots";
 import LessThanIconSVG from './SVGs/LessThanIconSVG'
 import GreaterThanIconSVG from './SVGs/GreaterThanIconSVG'
@@ -42,14 +42,14 @@ const ReflectionQuestionsResponse = () => {
       if (reflectionObject?.response == valueText || valueText.length == 0 && reflectionObject?.response.length == 0) {
          return;
       }
-      var uploadDate = new Date().toISOString()
+      var currentDate = new Date().toISOString()
       if (reflectionObject.type === 'Answered') {
          const inputValue: any = [...value]
          const inputTextObject = {
             responseId: reflectionObject.responseId,
             response: valueText,
             type: reflectionObject.type,
-            uploadDate: uploadDate,
+            lastUpdated: currentDate,
          }
          inputValue[index] = inputTextObject
          setValueHandler(inputValue)
@@ -60,7 +60,7 @@ const ReflectionQuestionsResponse = () => {
             episodeId: reflectionObject.episodeId,
             response: valueText,
             type: reflectionObject.type,
-            uploadDate: uploadDate,
+            uploadDate: currentDate,
          }
          inputValue[index] = inputTextObject
          setValueHandler(inputValue)
@@ -73,7 +73,7 @@ const ReflectionQuestionsResponse = () => {
 
    const saveResponseHandler = (arrayToSave: any) => {
       if (arrayToSave.length > 0) {
-         updateReflectionResponse(arrayToSave)
+         updateReflectionResponses(arrayToSave)
             .then((res) => {
                displaySavedToast()
             })
@@ -148,7 +148,7 @@ const ReflectionQuestionsResponse = () => {
                   style={tw.style('mx-2', 'mt-2', 'text-center', 'text-base', 'text-lightYellow', {
                      fontFamily: 'Gilroy-Regular',
                   })}>
-                  {item.uploadDate && `Last Updated: ${item.uploadDate}`}
+                  {item.lastUpdated && `Last Updated: ${new Date(item.lastUpdated).toDateString()}`}
                </Text>
 
             </ScrollView>

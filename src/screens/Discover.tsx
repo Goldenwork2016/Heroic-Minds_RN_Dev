@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, ImageBackground, Button, Pressable, FlatList, Image } from 'react-native';
+import { View, Text, ScrollView, ImageBackground, Button, TouchableOpacity, StyleSheet, FlatList, Image } from 'react-native';
 import { ListItem, SearchBar } from "react-native-elements";
 import DiscoverHeader from '../components/DiscoverHeader';
 import MasonryList from '@react-native-seoul/masonry-list';
+import NotificationIconSVG from '../components/SVGs/NotificationIconSVG'
 
 
 
 import tw from "../lib/tailwind";
-const DiscoverScreen = (props:any) => {
-    const [post, onCheckChange] = useState(true);
-    const [people, onCheckPeople] = useState(false);
-    const [search,setSearch]  = useState('')
-    const discoverPost = () => {
-        onCheckChange(true);
-        onCheckPeople(false);
+import { color } from "react-native-elements/dist/helpers";
+const DiscoverScreen = (props: any) => {
+    const [community, setCommunnity] = useState(true);
+    const [people, setPeople] = useState(false);
+    const [library, setLibrary] = useState(false);
+    const [search, setSearch] = useState('')
+
+    const discoverCommunity = () => {
+        setCommunnity(true);
+        setPeople(false);
+        setLibrary(false)
     }
 
     const discoverPeople = () => {
-        onCheckPeople(true);
-        onCheckChange(false);
+        setPeople(true);
+        setCommunnity(false);
+        setLibrary(false)
+
+    }
+    const discoverLibrary = () => {
+        setPeople(false);
+        setCommunnity(false);
+        setLibrary(true)
 
     }
 
-    
     const imgArray = [{
         img: 'https://cdn.pixabay.com/photo/2013/07/19/00/18/splashing-165192_960_720.jpg'
     },
@@ -45,332 +56,119 @@ const DiscoverScreen = (props:any) => {
     ]
 
     const image = { uri: "https://cdn.pixabay.com/photo/2015/01/09/11/09/meeting-594091_960_720.jpg" };
+    const peopleList = [
+        {
+
+            userImg: image,
+            name: "Chris Pine",
+            accName: '@Chris_notMarvel',
+            follow: true
+        },
+        {
+
+            userImg: image,
+            name: "Chris Evans",
+            accName: '@Chris_Evans',
+            follow: false
+        },
+        {
+
+            userImg: image,
+            name: "Chris Evans",
+            accName: '@Chris_Evans',
+            follow: false
+        },
+        {
+
+            userImg: image,
+            name: "Chris Pine",
+            accName: '@Chris_notMarvel',
+            follow: true
+        },
+        {
+
+            userImg: image,
+            name: "Chris Evans",
+            accName: '@Chris_Evans',
+            follow: false
+        }
+    ]
     return (
-        <>
-            <DiscoverHeader navigation={props.navigation}/>
-            <View style={tw.style("mr-5", "ml-5",)}>
+
+        <View style={{ flex: 1, backgroundColor: '#1C1C1C' }}>
+            {/* <DiscoverHeader navigation={props.navigation}/> */}
+            <View>
+                <View style={tw.style("flex-row", "mt-5", 'items-center', "justify-end", "mr-5", "ml-5")}>
+                    <View >
+                        <View style={tw.style("mr-5", "ml-5", { backgroundColor: '' })}>
+                            <View style={{ position: 'absolute', right: -10, top: -7, paddingHorizontal: 6, backgroundColor: '#000', borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ color: '#fff' }}>2</Text>
+                            </View>
+
+                            <NotificationIconSVG />
+                        </View>
+                    </View>
+                    <Image style={{ borderRadius: 100 }} source={require('../../assets/userImage.png')} />
+                </View>
+            </View>
+            <View style={tw.style("mr-2", "ml-2", "mt-4")}>
                 <SearchBar
-                    lightTheme
+                    // lightTheme
                     placeholder="Type to search..."
                     searchIcon={false}
-                    placeholderTextColor='black'
-                    inputStyle={{ backgroundColor: 'white', fontSize: 15 }}
+                    placeholderTextColor='#E9D8A6'
+                    inputStyle={{ backgroundColor: 'transparent', fontSize: 15 }}
                     // containerStyle={{backgroundColor: 'white', borderWidth: 0}}
-                    inputContainerStyle={{ backgroundColor: 'white', borderWidth: 0, height: 20 }}
+                    inputContainerStyle={{ backgroundColor: 'transparent', borderWidth: 0, height: 20 }}
                     containerStyle={{
-                        backgroundColor: 'white',
+                        backgroundColor: 'rgba(233,216,166,0.1)',
                         height: 45,
                         //width:500,
                         // marginLeft: 20,
-                        padding: 10,
+                        // padding: 10,
                         borderWidth: 0, //no effect
-                        shadowColor: 'white', //no effect
-                        borderBottomColor: 'black',
+                        // shadowColor: 'white', //no effect
+                        borderRadius: 8,
+                        borderBottomColor: 'transparent',
                         borderTopColor: 'transparent'
                     }}
-                onChangeText={setSearch}
-                value={search}
+                    onChangeText={setSearch}
+                    value={search}
                 />
             </View>
-            <View style={tw.style("flex-row", "justify-between","mr-10")}>
-            <Pressable style={tw.style("ml-10", "items-center",
+            <View style={tw.style("flex-row", "justify-between", "mx-5")}>
+                <TouchableOpacity style={tw.style("items-center",
                     "justify-center",
                     "mt-3",
                     "px-2",
-                    "rounded-lg", "h-7",)} onPress={discoverPost}>
-                    <Text style={tw.style("text-base")}>{'Library'}</Text>
+                    "rounded-lg", "h-7")} onPress={discoverLibrary}>
+                    <Text style={tw.style("text-base", { color: '#E9D8A6' }, library == true ? "font-bold" : "font-normal")}>{'Library'}</Text>
+                    <View style={library == true ? { height: 2, width: '100%', backgroundColor: '#E9D8A6' } : null}></View>
+                </TouchableOpacity>
 
-                </Pressable>
-                <Pressable style={tw.style( "items-center",
+                <TouchableOpacity style={tw.style("items-center",
                     "justify-center",
                     "mt-3",
                     "px-2",
-                    "rounded-lg", "h-7", )} onPress={discoverPost}>
-                    <Text style={tw.style("text-base", post == true ?"font-bold" : "font-normal")}>{'Community'}</Text>
+                    "rounded-lg", "h-7")} onPress={discoverCommunity}>
+                    <Text style={tw.style("text-base", { color: '#E9D8A6' }, community == true ? "font-bold" : "font-normal")}>{'Community'}</Text>
+                    <View style={community == true ? { height: 2, width: '100%', backgroundColor: '#E9D8A6' } : null}></View>
+                </TouchableOpacity>
 
-                </Pressable>
-
-                <Pressable style={tw.style( "items-center",
+                <TouchableOpacity style={tw.style("items-center",
                     "justify-center",
                     "mt-3",
                     "px-2",
-                    "rounded-lg", "h-7", )} onPress={discoverPeople}>
-                    <Text style={tw.style("text-base", post == false ?"font-bold" : "font-normal")}>{'People'}</Text>
-
-                </Pressable>
+                    "rounded-lg", "h-7")} onPress={discoverPeople}>
+                    <Text style={tw.style("text-base", { color: '#E9D8A6' }, people == true ? "font-bold" : "font-normal")}>{'People'}</Text>
+                    <View style={people == true ? { height: 2, width: '100%', backgroundColor: '#E9D8A6' } : null}></View>
+                </TouchableOpacity>
             </View>
 
-            {post == true ? <View><ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={tw.style("flex-row" )}>
-                {/* <View style={tw.style()}> */}
-                
-                <View style={tw.style("ml-5", "border-2",  "items-center",
-                "justify-center",
-                "mt-3",
-                "px-2",
-                "rounded-lg", "h-7", "bg-black")} >
-                <Text style={tw.style("text-white")}>{'Fear'}</Text>
-
-            </View>
-            <View style={tw.style( "ml-3", "border-2",  "items-center",
-                "justify-center",
-                "mt-3",
-                "px-2",
-                "rounded-lg", "h-7", "bg-black")} >
-                <Text style={tw.style("text-white")}>{'Love'}</Text>
-
-            </View><View style={tw.style( "ml-3", "border-2",  "items-center",
-                "justify-center",
-                "mt-3",
-                "px-2",
-                "rounded-lg", "h-7", "bg-black")} >
-                <Text style={tw.style("text-white")}>{'Purpose'}</Text>
-
-            </View><View style={tw.style( "ml-3", "border-2", "items-center",
-                "justify-center",
-                "mt-3",
-                "px-2",
-                "rounded-lg", "h-7", "bg-black")} >
-                <Text style={tw.style("text-white")}>{'Meaning'}</Text>
-
-            </View><View style={tw.style( "ml-3", "border-2",  "items-center",
-                "justify-center",
-                "mt-3",
-                "px-2",
-                "rounded-lg", "h-7", "bg-black")} >
-                <Text style={tw.style("text-white")}>{'Fear'}</Text>
-
-            </View><View style={tw.style( "ml-5", "border-2",  "items-center",
-                "justify-center",
-                "mt-3",
-                "px-2",
-                "rounded-lg", "h-7", "bg-black")} >
-                <Text style={tw.style("text-white")}>{'Fear'}</Text>
-                
-            </View></ScrollView></View>: null}
-
-            {post == false ? <ScrollView>
-                <View style={tw.style("mt-5",)}>
-                    <View style={tw.style("flex-row", "justify-start", "ml-5")}>
-                        <View style={tw.style("w-12", "h-12", "mt-3")}>
-                            <ImageBackground
-                                source={image}
-                                imageStyle={tw.style("rounded-full")}
-                                style={tw.style({ width: "100%", height: "100%" })}
-                            />
-                        </View>
-                        <View style={tw.style("m-3","flex-1")}>
-                            <View style={tw.style("flex-row")}>
-                                <Text
-                                    style={tw.style("text-xl", "leading-9", "break-words", {
-                                        fontFamily: "Gilroy-Bold",
-                                        color: "#0B0B0B",
-                                    })}
-                                >
-                                    {"Ben Fanelli"}
-                                </Text>
-                                {/* <View style={tw.style("ml-3","bg-black", "h-6", "rounded-full", )}>
-                                <Text
-                                    style={tw.style( "text-sm", "break-words",  "text-center", "px-5",{
-                                        fontFamily: "Gilroy-Medium",
-                                        
-                                        color: "#fff",
-                                        
-                                    })}
-                                >
-                                    {" Love"}
-                                </Text>
-                                </View> */}
-                            </View>
-                            <View>
-                                <Text
-                                    style={tw.style("text-sm", "leading-1", "break-words", {
-                                        fontFamily: "Gilroy-Medium",
-                                        color: "#c1c1c1",
-
-                                    })}
-                                >
-                                    {"2 hours ago"}
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={tw.style("mr-5", "mt-3", "flex-1", "px-1","py-1",)}>
-
-                        <Pressable
-                        style={tw.style(
-                            "items-center",
-                            "justify-center",
-
-                            "rounded-lg",
-                            {
-                                fontFamily: "Gilroy-Regular",
-                                backgroundColor: "#070B24",
-                            }
-                        )}
-                        // onPress={onLoginButtonPress}
-                        >
-                        <Text
-                            style={tw.style("text-sm", "p-2", {
-                                fontFamily: "Gilroy-SemiBold",
-                                color: "white",
-                            })}
-                        >
-                            {"Subscribe"}
-                        </Text>
-                        </Pressable>
-
-                        
-
-                        </View>
-                    </View>
-                    <View style={tw.style("flex-row", "justify-start", "ml-5")}>
-                        <View style={tw.style("w-12", "h-12", "mt-3")}>
-                            <ImageBackground
-                                source={image}
-                                imageStyle={tw.style("rounded-full")}
-                                style={tw.style({ width: "100%", height: "100%" })}
-                            />
-                        </View>
-                        <View style={tw.style("m-3","flex-1")}>
-                            <View style={tw.style("flex-row")}>
-                                <Text
-                                    style={tw.style("text-xl", "leading-9", "break-words", {
-                                        fontFamily: "Gilroy-Bold",
-                                        color: "#0B0B0B",
-                                    })}
-                                >
-                                    {"Ben Fanelli"}
-                                </Text>
-                                {/* <View style={tw.style("ml-3","bg-black", "h-6", "rounded-full", )}>
-                                <Text
-                                    style={tw.style( "text-sm", "break-words",  "text-center", "px-5",{
-                                        fontFamily: "Gilroy-Medium",
-                                        
-                                        color: "#fff",
-                                        
-                                    })}
-                                >
-                                    {" Love"}
-                                </Text>
-                                </View> */}
-                            </View>
-                            <View>
-                                <Text
-                                    style={tw.style("text-sm", "leading-1", "break-words", {
-                                        fontFamily: "Gilroy-Medium",
-                                        color: "#c1c1c1",
-
-                                    })}
-                                >
-                                    {"2 hours ago"}
-                                </Text>
-                            </View>
-                        </View>
-                        <View style={tw.style("mr-5",  "mt-3", "flex-1", "px-1","py-1",)}>
-
-                        <Pressable
-                        style={tw.style(
-                            "items-center",
-                            "justify-center",
-
-                            "rounded-lg",
-                            {
-                                fontFamily: "Gilroy-Regular",
-                                backgroundColor: "#070B24",
-                            }
-                        )}
-                        // onPress={onLoginButtonPress}
-                        >
-                        <Text
-                            style={tw.style("text-sm",  "p-2", {
-                                fontFamily: "Gilroy-SemiBold",
-                                color: "white",
-                            })}
-                        >
-                            {"Subscribe"}
-                        </Text>
-                        </Pressable>
-
-                        </View>
-                    </View>
-                    <View style={tw.style("flex-row", "justify-start", "ml-5")}>
-                        <View style={tw.style("w-12", "h-12", "mt-3")}>
-                            <ImageBackground
-                                source={image}
-                                imageStyle={tw.style("rounded-full")}
-                                style={tw.style({ width: "100%", height: "100%" })}
-                            />
-                        </View>
-                        <View style={tw.style("m-3", "flex-1")}>
-                            <View style={tw.style("flex-row")}>
-                                <Text
-                                    style={tw.style("text-xl", "leading-9", "break-words", {
-                                        fontFamily: "Gilroy-Bold",
-                                        color: "#0B0B0B",
-                                    })}
-                                >
-                                    {"Ben Fanelli"}
-                                </Text>
-                                {/* <View style={tw.style("ml-3","bg-black", "h-6", "rounded-full", )}>
-                                <Text
-                                    style={tw.style( "text-sm", "break-words",  "text-center", "px-5",{
-                                        fontFamily: "Gilroy-Medium",
-                                        
-                                        color: "#fff",
-                                        
-                                    })}
-                                >
-                                    {" Love"}
-                                </Text>
-                                </View> */}
-                            </View>
-                            <View>
-                                <Text
-                                    style={tw.style("text-sm", "leading-1", "break-words", {
-                                        fontFamily: "Gilroy-Medium",
-                                        color: "#c1c1c1",
-
-                                    })}
-                                >
-                                    {"2 hours ago"}
-                                </Text>
-                            </View>
-                        </View>
-                        
-                        <View style={tw.style("mr-5","mt-3", "flex-1", "px-1","py-1",)}>
-
-                        
-
-                        <Pressable
-                        style={tw.style(
-                            "items-center",
-                            "justify-center",
-                            
-                            "rounded-lg",
-                            {
-                                fontFamily: "Gilroy-Regular",
-                                backgroundColor: "#e4c166",
-                            }
-                        )}
-                        // onPress={onLoginButtonPress}
-                        >
-                        <Text
-                            style={tw.style("text-sm", "p-2", {
-                                fontFamily: "Gilroy-SemiBold",
-                                color: "white",
-                            })}
-                        >
-                            {"Subscribed"}
-                        </Text>
-                        </Pressable>
-
-                        
-
-                        </View>
-                    </View>
-                </View>
-            </ScrollView> :
-                <View style={tw.style("flex-1", "mt-3")}>
-                    {/* <FlatList
+            {library == true ?
+                <View style={{ flex: 1 }}>
+                    <View style={tw.style("flex-1", "mt-5")}>
+                        {/* <FlatList
                         data={imgArray}
                         renderItem={({ item }) =>
                             <View style={tw.style("flex-1")}>
@@ -383,43 +181,179 @@ const DiscoverScreen = (props:any) => {
 
                         }
                     /> */}
-                    <MasonryList
-                        data={imgArray}
+                        <MasonryList
+                            data={imgArray}
+                            ListHeaderComponent={<View />}
+                            contentContainerStyle={{
+                                alignSelf: 'stretch',
+                            }}
+                            numColumns={2}
+                            renderItem={({ item }) =>
+                                <View style={tw.style("px-2", "py-2")}>
+                                    <Image
+                                        source={{ uri: item.img }}
+                                        // imageStyle={tw.style("rounded-full")}
+                                        style={tw.style("rounded-xl", { height: 190, })}
+                                        resizeMode='cover'
 
-                        ListHeaderComponent={<View />}
-                        contentContainerStyle={{
-                            paddingHorizontal: 24,
-                            alignSelf: 'stretch',
-                        }}
-                        numColumns={2}
-                        renderItem={({ item }) =>
-                            <View style={tw.style("px-2", "py-2")}>
-                                <Image
-                                    source={{ uri: item.img }}
-                                    // imageStyle={tw.style("rounded-full")}
-                                    style={tw.style("rounded-xl",{ height: Math.random() < 0.5 ? 150 : 280 })}
+                                    />
+                                    <View style={tw.style("px-1", "py-2", "items-center")}>
+                                        <Text numberOfLines={1} ellipsizeMode={'tail'} style={tw.style("font-semibold", { fontSize: 16, color: '#E9D8A6' })}>{'In The Beginning '}</Text>
 
-                                />
-                                <View style={tw.style("px-1", "py-1")}>
-                                    <Text numberOfLines={1} ellipsizeMode={'tail'} style={tw.style("font-bold")}>{'In The Beginning '}</Text>
-                                    <View style={tw.style("flex-row")}>
-                                        <Text style={tw.style("text-gray-400")}>{'John Page'}</Text>
-                                        {/* <Text style={tw.style()}>{'Flag'}</Text> */}
+                                        {/* <Text style={{ color: '#E9D8A6' }}>{'John Page'}</Text> */}
+
+
                                     </View>
                                 </View>
-                            </View>
-                        }
+                            }
 
-                    />
+                        />
+
+
+                    </View>
+                </View>
+
+                : null}
+            {community == true ?
+                <View style={{ flex: 1 }}>
+                    <View style={{ paddingVertical: 10 }}>
+                        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={tw.style("flex-row")}>
+                            {/* <View style={tw.style()}> */}
+                            {['fear', 'love', 'Purpose', 'Meaning', 'fear']?.map((data, index) => {
+                                return <View style={tw.style("ml-5", "items-center",
+                                    "justify-center",
+                                    // "mt-3",
+                                    "px-2",
+                                    "rounded-lg", "h-7", "bg-black", { borderColor: '#E9D8A6', borderWidth: 1 })} >
+                                    <Text style={tw.style("text-white", "capitalize", "font-bold", { color: "#E9D8A6" })}>{data}</Text>
+
+                                </View>
+                            })}
+
+                        </ScrollView>
+                    </View>
+                    <View style={tw.style("flex-1")}>
+
+                        <MasonryList
+                            data={imgArray}
+                            ListHeaderComponent={<View />}
+                            contentContainerStyle={{
+                                alignSelf: 'stretch',
+                            }}
+                            numColumns={2}
+                            renderItem={({ item }) =>
+                                <View style={tw.style("px-2", "py-2")}>
+                                    <Image
+                                        source={{ uri: item.img }}
+                                        // imageStyle={tw.style("rounded-full")}
+                                        style={tw.style("rounded-xl", { height: 194, })}
+                                        resizeMode='cover'
+
+                                    />
+                                    <View style={tw.style("px-1", "py-2", "items-center")}>
+                                        <Text numberOfLines={1} ellipsizeMode={'tail'} style={tw.style("font-semibold", { fontSize: 16, color: '#E9D8A6' })}>{'In The Beginning '}</Text>
+
+                                        <Text style={{ color: '#E9D8A6' }}>{'John Page'}</Text>
+
+
+                                    </View>
+                                </View>
+                            }
+
+                        />
+
+
+                    </View>
+                </View>
+
+                : null}
+
+            {people == true ? <ScrollView>
+                <View style={tw.style("mt-5")}>
+                    {peopleList.map((data, index) => {
+                        return <View style={tw.style("flex-row", "justify-start", "items-center", "mx-2", "mt-3", "px-2", "py-2", "rounded-xl", { backgroundColor: 'rgba(233,216,166,0.11)' })}>
+                            <View style={tw.style("w-12", "h-12")}>
+                                <ImageBackground
+                                    source={data.userImg}
+                                    imageStyle={tw.style("rounded-full")}
+                                    style={tw.style({ width: "100%", height: "100%" })}
+                                />
+                            </View>
+                            <View style={tw.style("ml-3", "flex-1")}>
+                                <View style={tw.style("flex-row")}>
+                                    <Text
+                                        style={tw.style("text-xl", "leading-9", "break-words", "font-semibold", {
+                                            color: "#E9D8A6",
+                                            fontSize: 16
+                                        })}
+                                    >
+                                        {data.name}
+                                    </Text>
+                                </View>
+
+                                <Text
+                                    style={tw.style({
+                                        fontFamily: "Gilroy-Medium",
+                                        color: "#E9D8A6",
+
+                                    })}
+                                >
+                                    {data.accName}
+                                </Text>
+
+                            </View>
+                            <View style={tw.style()}>
+
+                                <TouchableOpacity
+                                    style={tw.style(
+                                        "items-center",
+                                        "justify-center",
+                                        "rounded-lg",
+                                        {
+                                            fontFamily: "Gilroy-Regular",
+                                            backgroundColor: "#070B24",
+                                            width: 75
+                                        }, data.follow ? styles.subscribeBtnActive : styles.subscribeBtn
+                                    )}
+                                // onPress={onLoginButtonPress}
+                                >
+                                    <Text
+                                        style={tw.style("text-sm", "p-2", {
+                                            fontFamily: "Gilroy-SemiBold",
+                                            fontSize: 13,
+                                        }, data.follow ? { color: '#000' } : { color: '#E9D8A6' })}
+                                    >
+                                        {data.follow ? "Following" : "Follow"}
+                                    </Text>
+                                </TouchableOpacity>
+
+
+
+                            </View>
+                        </View>
+                    })}
+
 
 
                 </View>
-
+            </ScrollView> :
+                null
             }
+        </View>
 
-        </>
 
     )
 }
+const styles = StyleSheet.create({
+    subscribeBtn: {
+        borderWidth: 1,
+        borderColor: '#E9D8A6',
+        color: '#E9D8A6',
+        backgroundColor: 'transparent'
+    },
+    subscribeBtnActive: {
+        backgroundColor: '#E9D8A6'
+    }
+})
 
 export default DiscoverScreen;

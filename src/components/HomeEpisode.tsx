@@ -161,7 +161,7 @@ const HomeEpisode = (props: HomeEpisodeProps) => {
          }}>
          <View>
             <View
-               style={tw.style(`w-${45}`, `h-${50}`, 'rounded-xl', 'mr-4 drop-shadow-md  ', {
+               style={tw.style(`w-${35}`, `h-${40}`, 'rounded-xl', 'mr-4 drop-shadow-md  ', {
                   overflow: 'hidden',
                })}>
                {episode.isStory ? (
@@ -179,17 +179,19 @@ const HomeEpisode = (props: HomeEpisodeProps) => {
                   style={tw.style('w-full h-full flex-1')}
                />
             </View>
-            <View style={tw.style('w-45', {})}>
+            <View style={tw.style('w-35 ', {})}>
                <Text
-                  style={tw.style('text-lightYellow text-center pt-2 pb-1 text-base', {
+                  numberOfLines={1}
+                  style={tw.style('text-lightYellow text-center pt-2 pb-1', {
                      fontFamily: 'Gilroy-Medium',
                   })}>
                   {episode.episodeTitle}
                </Text>
                {showCategory ? (
                   <Text
-                     style={tw.style('text-lightYellow text-center text-small', {
+                     style={tw.style('text-lightYellow text-center', {
                         fontFamily: 'Gilroy-Regular',
+                        fontSize: 12,
                      })}>
                      {episode.categoryName}
                   </Text>

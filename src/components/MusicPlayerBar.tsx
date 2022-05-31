@@ -83,13 +83,13 @@ const MusicPlayerBar = () => {
          {/* Mini Player */}
          {!showBottomPlayer ? (
             <Pressable
-               style={tw.style('flex-row', 'justify-start', 'w-screen bg-lightYellow')}
+               style={tw.style('flex-row', 'justify-start', ' bg-lightYellow')}
                onPress={() => {
                   navigateTodetails()
                }}>
                <View style={tw.style('flex-row', 'justify-start')}>
                   {/* Image */}
-                  <View style={tw.style('w-25', 'h-25 ')}>
+                  <View style={tw.style('w-18', 'h-18')}>
                      <ImageBackground
                         source={{
                            uri: imageBaseURI.uri + currentEpisode.id + '.png',
@@ -99,16 +99,17 @@ const MusicPlayerBar = () => {
                      />
                   </View>
                   {/* Info */}
-                  <View style={tw.style('m-2', 'w-55')}>
+                  <View style={tw.style('ml-2 my-auto w-60 ')}>
                      <Text
                         numberOfLines={1}
-                        style={tw.style('text-xl', 'mt-2 mb-2 text-darkGrey', {
+                        style={tw.style('', 'mt-2 mb-2 text-darkGrey', {
                            fontFamily: 'Gilroy-SemiBold',
+                           fontSize: '18',
                         })}>
                         {currentEpisode.title}
                      </Text>
                      <Text
-                        style={tw.style('text-base text-darkGrey', {
+                        style={tw.style('text-sm text-darkGrey', {
                            fontFamily: 'Gilroy-Medium',
                         })}>
                         Playing Now
@@ -131,8 +132,8 @@ const MusicPlayerBar = () => {
                      }}>
                      <Ionicons
                         name={isPlaying ? 'pause' : 'play'}
-                        style={tw.style('pr-5 text-darkGrey drop-shadow-md')}
-                        size={35}
+                        style={tw.style('pr-1 text-darkGrey drop-shadow-md')}
+                        size={25}
                      />
                   </Pressable>
                </View>
@@ -141,13 +142,7 @@ const MusicPlayerBar = () => {
          {showBottomPlayer ? (
             // Full Player
             <View
-               style={tw.style(
-                  'flex-row',
-                  'justify-around ',
-                  'items-center',
-                  'w-screen',
-                  'p-2'
-               )}>
+               style={tw.style('flex-row', 'justify-around ', 'items-center', 'w-screen', 'p-2')}>
                <View style={tw.style('w-15', 'items-center ')}>
                   <Text style={tw.style('text-sm', 'text-black text-lightYellow font-bold')}>
                      {audioPlaybackDetails !== null ? (

@@ -30,11 +30,11 @@ const HomeHeader = (props: HomeThemeProps) => {
    const signOutHandler = () => {}
 
    return (
-      <View style={tw.style('mb-2')}>
+      <View>
          <View style={tw.style('justify-between flex-row content-center w-screen')}>
             <Text
                style={tw.style('text-2xl text-lightYellow', {
-                  fontFamily: 'Gilroy-SemiBold',
+                  fontFamily: 'Gilroy-Medium',
                })}>
                Welcome {!first ? 'Hero' : first}
             </Text>
