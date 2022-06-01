@@ -175,9 +175,10 @@ const RootTabNavigator = () => {
 
    return (
       <>
-         <SafeAreaView style={tw.style('flex-1 bg-darkGrey')}>
+         <SafeAreaView style={tw.style('flex-1 mt-8 bg-darkGrey')}>
             {Platform.OS == 'android' ? <View style={tw.style('mt-8')}></View> : <></>}
-            {renderScreen()}</SafeAreaView>
+            {renderScreen()}
+         </SafeAreaView>
       </>
    )
 }

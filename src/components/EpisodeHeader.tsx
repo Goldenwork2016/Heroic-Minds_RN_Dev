@@ -36,13 +36,15 @@ const EpisodeHeader = ({ episode, navigation }: EpisodeHeaderProps) => {
 
    return (
       <>
-         <View style={tw.style('flex-row w-screen justify-between mx-3 mt-2 items-center')}>
-            <View style={tw.style('pt-5')}>
+         <View style={tw.style('flex-row w-screen justify-between mx-3 items-center')}>
+            <View style={tw.style('')}>
                <GoBack navigation={navigation} />
             </View>
+            <View style={tw.style('pb-5')}>
             <Pressable onPress={navigateToReflectionQuestion}>
                <PencilIconSvg />
             </Pressable>
+            </View>
          </View>
 
          <Animated.ScrollView

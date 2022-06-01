@@ -14,12 +14,10 @@ const ThemeHeader = ({ theme, navigation }: ThemeDetailHeaderProps) => {
    return (
       <SafeAreaView style={tw.style('bg-black text-white')}>
          <StatusBar style='light' />
-         <View style={tw.style('my-5', 'px-2')}>
-            <View style={tw.style('flex-row', 'items-center',)}>
+         <View style={tw.style('mb-5', 'px-2')}>
+            <View style={tw.style('flex-row', 'items-center')}>
                <View style={tw.style('w-10', 'h-4', 'mt-2')}>
-
                   <GoBack navigation={navigation} />
-
                </View>
                <Text
                   style={tw.style('text-2xl', 'leading-10', 'text-lightYellow', {
