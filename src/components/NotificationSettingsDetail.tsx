@@ -24,9 +24,7 @@ import SwitchToggle from 'react-native-switch-toggle'
 import InsightIconSVG from './SVGs/InsightIconSVG'
 
 import DateTimePicker from '@react-native-community/datetimepicker'
-import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import Arrow from '../../assets/arrow.png'
-import { set } from 'react-native-reanimated'
 
 type NotificationScreenNavigationProps = {}
 
@@ -756,17 +754,65 @@ const NotificationDetail = ({
                      </View>
                   )}
 
-                  {showTime === true && (
+                  {showTime === true && Platform.OS === 'android' && (
                      <DateTimePicker
                         testID='dateTimePicker'
                         mode='time'
                         value={reminder}
-                        is24Hour={true}
+                        is24Hour={false}
                         onChange={onChange}
-                        display={Platform.OS === 'ios' ? 'default' : 'default'}
+                        display={'default'}
                         onCancel={hidePicker}
                         onConfirm={handleConfirm}
                      />
+                  )}
+                  {/* <Button onPress={() => setShowTime(true)} title='Show Time' /> */}
+                  {Platform.OS === 'ios' && (
+                     <Modal
+                        visible={showTime}
+                        transparent={true}
+                        onDismiss={() => setShowTime(false)}>
+                        <View
+                           style={{
+                              flex: 1,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              marginTop: 22,
+                           }}>
+                           <View
+                              style={tw.style('pb-3', {
+                                 width: '90%',
+                                 backgroundColor: 'white',
+                                 justifyContent: 'center',
+                                 alignItems: 'center',
+                                 borderRadius: 20,
+                              })}>
+                              <DateTimePicker
+                                 testID='dateTimePicker'
+                                 mode='time'
+                                 value={reminder}
+                                 is24Hour={true}
+                                 onChange={onChange}
+                                 display={'spinner'}
+                                 onCancel={hidePicker}
+                                 onConfirm={handleConfirm}
+                                 style={{
+                                    width: '100%',
+                                    borderRadius: 20,
+                                    padding: 40,
+                                 }}
+                              />
+                              <Pressable
+                                 onPress={() => setShowTime(false)}
+                                 style={tw.style('pt-2', 'pb-2', 'pl-5', 'pr-5', 'rounded-lg', {
+                                    borderWidth: 1,
+                                    borderColor: '#c1c1c1',
+                                 })}>
+                                 <Text style={tw.style('text-base', 'text-dark')}>OK</Text>
+                              </Pressable>
+                           </View>
+                        </View>
+                     </Modal>
                   )}
                </View>
 
