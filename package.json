@@ -9,7 +9,6 @@
    },
    "dependencies": {
       "@aws-amplify/cli": "^6.3.1",
-      "@babel/runtime": "^7.18.3",
       "@pixi/constants": "^6.2.1",
       "@pixi/core": "^6.2.1",
       "@pixi/filter-alpha": "^6.2.1",
@@ -28,7 +27,6 @@
       "@react-navigation/native": "^6.0.6",
       "@react-navigation/native-stack": "^6.2.5",
       "@sentry/react-native": "^3.2.8",
-      "add": "^2.0.6",
       "aws-amplify": "^4.3.4",
       "axios": "^0.24.0",
       "expo": "~43.0.0",

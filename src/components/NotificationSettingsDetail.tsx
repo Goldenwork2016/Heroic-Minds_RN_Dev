@@ -27,7 +27,7 @@ import InsightIconSVG from './SVGs/InsightIconSVG'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import Arrow from '../../assets/arrow.png'
 import { scheduleNotification } from '../lib/notifications'
-import { CalendarTriggerInput, cancelAllScheduledNotificationsAsync } from 'expo-notifications'
+import { cancelAllScheduledNotificationsAsync } from 'expo-notifications'
 
 type NotificationScreenNavigationProps = {}
 
