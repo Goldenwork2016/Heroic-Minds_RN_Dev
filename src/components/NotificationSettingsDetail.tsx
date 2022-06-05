@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react'
 import {
    ScrollView,
    Text,
@@ -16,6 +16,7 @@ import {
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
+import * as Notifications from 'expo-notifications'
 import tw from '../lib/tailwind'
 import { signOut } from '../hooks/useAuth'
 import { AuthContext } from '../context'
@@ -25,8 +26,18 @@ import InsightIconSVG from './SVGs/InsightIconSVG'
 
 import DateTimePicker from '@react-native-community/datetimepicker'
 import Arrow from '../../assets/arrow.png'
+import { scheduleNotification } from '../lib/notifications'
+import { cancelAllScheduledNotificationsAsync } from 'expo-notifications'
 
 type NotificationScreenNavigationProps = {}
+
+const options = [
+   { label: 'Every Day', value: 'every-day' },
+   { label: 'Every Other Day', value: 'every-other-day' },
+   { label: 'Every Three Days', value: 'every-three-days' },
+   { label: 'Sundays', value: 'sundays' },
+   { label: 'Mondays', value: 'mondays' },
+]
 
 const NotificationDetail = ({
    navigation,
@@ -38,8 +49,8 @@ const NotificationDetail = ({
    const [HomeNotificationon, HomeNotificationoff] = React.useState(false)
    const [CommunityNotificationon, CommunityNotificationoff] = React.useState(false)
 
-   const [value, setValue] = React.useState('one')
-   const [reminder, setReminder] = React.useState<any>(new Date(Date.now()))
+   const [value, setValue] = React.useState('every-day')
+   const [reminder, setReminder] = React.useState<Date>(new Date(Date.now()))
    const [showTime, setShowTime] = React.useState(false)
    const [visible, setVisible] = React.useState(false)
 
@@ -50,6 +61,57 @@ const NotificationDetail = ({
       }
       setReminder(newDate)
    }
+
+   const onScheduleReminder = async () => {
+      const hour = reminder.getHours()
+      const minute = reminder.getMinutes()
+
+      let schedule = {}
+
+      switch (value) {
+         case 'every-day':
+            schedule = {
+               hour,
+               minute,
+            }
+            break
+
+         case 'every-other-day':
+            schedule = {
+               seconds: 3600 * 48,
+            }
+            break
+
+         case 'every-three-days':
+            schedule = {
+               seconds: 3600 * 72,
+            }
+            break
+
+         case 'sundays':
+            schedule = {
+               weekday: 1,
+               hour,
+               minute,
+            }
+            break
+
+         case 'mondays':
+            schedule = {
+               weekday: 2,
+               hour,
+               minute,
+            }
+            break
+
+         default:
+            break
+      }
+
+      await cancelAllScheduledNotificationsAsync()
+      scheduleNotification(schedule, value, { hour, minute })
+   }
+
    const showPicker = () => {
       setShowTime(true)
    }
@@ -63,6 +125,22 @@ const NotificationDetail = ({
    const formatedHour = hour > 12 ? hour - 12 : hour
    const minutes = reminder.getMinutes()
    const format = hour <= 11 ? 'AM' : 'PM'
+
+   React.useEffect(() => {
+      Notifications.getAllScheduledNotificationsAsync().then((currentNotification) => {
+         const {
+            content: { data },
+         } = currentNotification[0]
+         const { hour, minute, mode } = data.data as any
+         const dateReminder = new Date()
+         if (!isNaN(hour)) {
+            dateReminder.setHours(hour as number)
+            dateReminder.setMinutes(minute as number)
+         }
+         setReminder(dateReminder)
+         setValue(mode)
+      })
+   }, [])
 
    return (
       <View>
@@ -125,142 +203,45 @@ const NotificationDetail = ({
                                  borderRightWidth: 1,
                                  borderRightColor: '#1C1C1C',
                               })}>
-                              <Pressable
-                                 onPress={() => setValue('one')}
-                                 style={tw.style(
-                                    'flex',
-                                    'flex-row',
-                                    'pt-2',
-                                    'pb-2',
-                                    value === 'one' && styles.active,
-                                    {
-                                       justifyContent: 'space-between',
-                                       alignItems: 'center',
-                                    }
-                                 )}>
-                                 <Text
+                              {options.map(({ label, value: optionValue }) => (
+                                 <Pressable
+                                    onPress={() => setValue(optionValue)}
                                     style={tw.style(
-                                       'flex-1',
-                                       'text-base',
-                                       'ml-3',
-                                       'text-lightYellow'
+                                       'flex',
+                                       'flex-row',
+                                       'pt-2',
+                                       'pb-2',
+                                       value === optionValue && styles.active,
+                                       {
+                                          justifyContent: 'space-between',
+                                          alignItems: 'center',
+                                       }
                                     )}>
-                                    Every Day
-                                 </Text>
-                                 {value === 'one' && (
-                                    <Image
-                                       style={tw.style('mr-3', {
-                                          width: 20,
-                                          height: 7,
-                                       })}
-                                       source={Arrow}
-                                    />
-                                 )}
-                              </Pressable>
-                              <Pressable
-                                 onPress={() => setValue('two')}
-                                 style={tw.style(
-                                    'flex',
-                                    'flex-row',
-                                    'pt-2',
-                                    'pb-2',
-                                    value === 'two' && styles.active,
-                                    {
-                                       justifyContent: 'space-between',
-                                       alignItems: 'center',
-                                    }
-                                 )}>
-                                 <Text style={tw.style('text-base', 'ml-3', 'text-lightYellow')}>
-                                    Every Other Day
-                                 </Text>
-                                 {value === 'two' && (
-                                    <Image
-                                       style={tw.style('mr-3', {
-                                          width: 20,
-                                          height: 7,
-                                       })}
-                                       source={Arrow}
-                                    />
-                                 )}
-                              </Pressable>
-                              <Pressable
-                                 onPress={() => setValue('three')}
-                                 style={tw.style(
-                                    'flex',
-                                    'flex-row',
-                                    'pt-2',
-                                    'pb-2',
-                                    value === 'three' && styles.active,
-                                    {
-                                       justifyContent: 'space-between',
-                                       alignItems: 'center',
-                                    }
-                                 )}>
-                                 <Text style={tw.style('text-base', 'ml-3', 'text-lightYellow')}>
-                                    Every Three Days
-                                 </Text>
-                                 {value === 'three' && (
-                                    <Image
-                                       style={tw.style('mr-3', {
-                                          width: 20,
-                                          height: 7,
-                                       })}
-                                       source={Arrow}
-                                    />
-                                 )}
-                              </Pressable>
-                              <Pressable
-                                 onPress={() => setValue('four')}
-                                 style={tw.style(
-                                    'flex',
-                                    'flex-row',
-                                    'pt-2',
-                                    'pb-2',
-                                    value === 'four' && styles.active,
-                                    {
-                                       justifyContent: 'space-between',
-                                       alignItems: 'center',
-                                    }
-                                 )}>
-                                 <Text style={tw.style('text-base', 'ml-3', 'text-lightYellow')}>
-                                    Sundays
-                                 </Text>
-                                 {value === 'four' && (
-                                    <Image
-                                       style={tw.style('mr-3', {
-                                          width: 20,
-                                          height: 7,
-                                       })}
-                                       source={Arrow}
-                                    />
-                                 )}
-                              </Pressable>
-                              <Pressable
-                                 onPress={() => setValue('five')}
-                                 style={tw.style(
-                                    'flex',
-                                    'flex-row',
-                                    'pt-2',
-                                    'pb-2',
-                                    value === 'five' && styles.active,
-                                    {
-                                       justifyContent: 'space-between',
-                                       alignItems: 'center',
-                                    }
-                                 )}>
-                                 <Text style={tw.style('text-base', 'ml-3', 'text-lightYellow')}>
-                                    Mondays
-                                 </Text>
-                                 {value === 'five' && (
-                                    <Image
-                                       style={tw.style('mr-3', {
-                                          width: 20,
-                                          height: 7,
-                                       })}
-                                       source={Arrow}
-                                    />
-                                 )}
-                              </Pressable>
+                                    <Text
+                                       style={tw.style(
+                                          'flex-1',
+                                          'text-base',
+                                          'ml-3',
+                                          'text-lightYellow'
+                                       )}>
+                                       {label}
+                                    </Text>
+                                    {value === optionValue && (
+                                       <Image
+                                          style={tw.style(
+                                             `${
+                                                optionValue === 'every-three-days' ? 'mr-1' : 'mr-3'
+                                             }`,
+                                             {
+                                                width: 20,
+                                                height: 7,
+                                             }
+                                          )}
+                                          source={Arrow}
+                                       />
+                                    )}
+                                 </Pressable>
+                              ))}
                            </View>
                            <View
                               style={tw.style('flex', 'flex-column', 'mr-3', 'mt-3', {
@@ -268,487 +249,92 @@ const NotificationDetail = ({
                                  alignItems: 'center',
                                  width: '50%',
                               })}>
-                              {value === 'one' ? (
-                                 <>
-                                    <Pressable
-                                       onPress={showPicker}
-                                       style={tw.style('flex', 'flex-row', 'mr-3', 'mt-3', {
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          width: '50%',
+                              <Pressable
+                                 onPress={showPicker}
+                                 style={tw.style('flex', 'flex-row', 'mr-3', 'mt-3', {
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: '50%',
+                                 })}>
+                                 <View
+                                    style={tw.style(
+                                       'ml-2',
+                                       'pt-3',
+                                       'pb-3',
+                                       'pl-1',
+                                       'pr-1',
+                                       'rounded-xl',
+                                       {
+                                          backgroundColor: '#938E80',
+                                       }
+                                    )}>
+                                    <Text
+                                       style={tw.style('w-7', {
+                                          fontFamily: 'Gilroy-Bold',
+                                          color: '#1C1C1C',
+                                          fontSize: 18,
+                                          textAlign: 'center',
                                        })}>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {formatedHour}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {minutes}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {format}
-                                          </Text>
-                                       </View>
-                                    </Pressable>
-                                    <View style={tw.style('mt-4')}>
-                                       <Pressable
-                                          onPress={() => null}
-                                          style={tw.style(
-                                             'pt-2',
-                                             'pb-2',
-                                             'pl-5',
-                                             'pr-5',
-                                             'rounded-lg',
-                                             {
-                                                borderWidth: 1,
-                                                borderColor: '#E9D8A6',
-                                             }
-                                          )}>
-                                          <Text style={tw.style('text-base', 'text-lightYellow')}>
-                                             Save
-                                          </Text>
-                                       </Pressable>
-                                    </View>
-                                 </>
-                              ) : value === 'two' ? (
-                                 <>
-                                    <Pressable
-                                       onPress={showPicker}
-                                       style={tw.style('flex', 'flex-row', 'mr-3', 'mt-3', {
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          width: '50%',
+                                       {formatedHour}
+                                    </Text>
+                                 </View>
+                                 <View
+                                    style={tw.style(
+                                       'ml-2',
+                                       'pt-3',
+                                       'pb-3',
+                                       'pl-1',
+                                       'pr-1',
+                                       'rounded-xl',
+                                       {
+                                          backgroundColor: '#938E80',
+                                       }
+                                    )}>
+                                    <Text
+                                       style={tw.style('w-7', {
+                                          fontFamily: 'Gilroy-Bold',
+                                          color: '#1C1C1C',
+                                          fontSize: 18,
+                                          textAlign: 'center',
                                        })}>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {formatedHour}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {minutes}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {format}
-                                          </Text>
-                                       </View>
-                                    </Pressable>
-                                    <View style={tw.style('mt-4')}>
-                                       <Pressable
-                                          onPress={() => null}
-                                          style={tw.style(
-                                             'pt-2',
-                                             'pb-2',
-                                             'pl-5',
-                                             'pr-5',
-                                             'rounded-lg',
-                                             {
-                                                borderWidth: 1,
-                                                borderColor: '#E9D8A6',
-                                             }
-                                          )}>
-                                          <Text style={tw.style('text-base', 'text-lightYellow')}>
-                                             Save
-                                          </Text>
-                                       </Pressable>
-                                    </View>
-                                 </>
-                              ) : value === 'three' ? (
-                                 <>
-                                    <Pressable
-                                       onPress={showPicker}
-                                       style={tw.style('flex', 'flex-row', 'mr-3', 'mt-3', {
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          width: '50%',
+                                       {minutes}
+                                    </Text>
+                                 </View>
+                                 <View
+                                    style={tw.style(
+                                       'ml-2',
+                                       'pt-3',
+                                       'pb-3',
+                                       'pl-1',
+                                       'pr-1',
+                                       'rounded-xl',
+                                       {
+                                          backgroundColor: '#938E80',
+                                       }
+                                    )}>
+                                    <Text
+                                       style={tw.style('w-7', {
+                                          fontFamily: 'Gilroy-Bold',
+                                          color: '#1C1C1C',
+                                          fontSize: 18,
+                                          textAlign: 'center',
                                        })}>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {formatedHour}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {minutes}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {format}
-                                          </Text>
-                                       </View>
-                                    </Pressable>
-                                    <View style={tw.style('mt-4')}>
-                                       <Pressable
-                                          onPress={() => null}
-                                          style={tw.style(
-                                             'pt-2',
-                                             'pb-2',
-                                             'pl-5',
-                                             'pr-5',
-                                             'rounded-lg',
-                                             {
-                                                borderWidth: 1,
-                                                borderColor: '#E9D8A6',
-                                             }
-                                          )}>
-                                          <Text style={tw.style('text-base', 'text-lightYellow')}>
-                                             Save
-                                          </Text>
-                                       </Pressable>
-                                    </View>
-                                 </>
-                              ) : value === 'four' ? (
-                                 <>
-                                    <Pressable
-                                       onPress={showPicker}
-                                       style={tw.style('flex', 'flex-row', 'mr-3', 'mt-3', {
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          width: '50%',
-                                       })}>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {formatedHour}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {minutes}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {format}
-                                          </Text>
-                                       </View>
-                                    </Pressable>
-                                    <View style={tw.style('mt-4')}>
-                                       <Pressable
-                                          onPress={() => null}
-                                          style={tw.style(
-                                             'pt-2',
-                                             'pb-2',
-                                             'pl-5',
-                                             'pr-5',
-                                             'rounded-lg',
-                                             {
-                                                borderWidth: 1,
-                                                borderColor: '#E9D8A6',
-                                             }
-                                          )}>
-                                          <Text style={tw.style('text-base', 'text-lightYellow')}>
-                                             Save
-                                          </Text>
-                                       </Pressable>
-                                    </View>
-                                 </>
-                              ) : value === 'five' ? (
-                                 <>
-                                    <Pressable
-                                       onPress={showPicker}
-                                       style={tw.style('flex', 'flex-row', 'mr-3', 'mt-3', {
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
-                                          width: '50%',
-                                       })}>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {formatedHour}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {minutes}
-                                          </Text>
-                                       </View>
-                                       <View
-                                          style={tw.style(
-                                             'ml-2',
-                                             'pt-3',
-                                             'pb-3',
-                                             'pl-1',
-                                             'pr-1',
-                                             'rounded-xl',
-                                             {
-                                                backgroundColor: '#938E80',
-                                             }
-                                          )}>
-                                          <Text
-                                             style={tw.style('w-7', {
-                                                fontFamily: 'Gilroy-Bold',
-                                                color: '#1C1C1C',
-                                                fontSize: 18,
-                                                textAlign: 'center',
-                                             })}>
-                                             {format}
-                                          </Text>
-                                       </View>
-                                    </Pressable>
-                                    <View style={tw.style('mt-4')}>
-                                       <Pressable
-                                          onPress={() => null}
-                                          style={tw.style(
-                                             'pt-2',
-                                             'pb-2',
-                                             'pl-5',
-                                             'pr-5',
-                                             'rounded-lg',
-                                             {
-                                                borderWidth: 1,
-                                                borderColor: '#E9D8A6',
-                                             }
-                                          )}>
-                                          <Text style={tw.style('text-base', 'text-lightYellow')}>
-                                             Save
-                                          </Text>
-                                       </Pressable>
-                                    </View>
-                                 </>
-                              ) : null}
+                                       {format}
+                                    </Text>
+                                 </View>
+                              </Pressable>
+                              <View style={tw.style('mt-4')}>
+                                 <Pressable
+                                    onPress={onScheduleReminder}
+                                    style={tw.style('pt-2', 'pb-2', 'pl-5', 'pr-5', 'rounded-lg', {
+                                       borderWidth: 1,
+                                       borderColor: '#E9D8A6',
+                                    })}>
+                                    <Text style={tw.style('text-base', 'text-lightYellow')}>
+                                       Save
+                                    </Text>
+                                 </Pressable>
+                              </View>
                            </View>
                         </View>
                      </View>
@@ -868,4 +454,4 @@ const styles = StyleSheet.create({
    },
 })
 
-export default NotificationDetail;
+export default NotificationDetail

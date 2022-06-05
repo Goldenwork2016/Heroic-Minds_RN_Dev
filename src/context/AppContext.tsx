@@ -1,9 +1,22 @@
 import React from 'react'
+import * as Notifications from 'expo-notifications'
 import { AppContext } from './index'
+import { Platform } from 'react-native'
+import { Subscription } from 'expo-modules-core'
+import { registerForPushNotificationsAsync, scheduleNotification } from '../lib/notifications'
 
 interface AppProps {
    children: React.ReactNode
 }
+
+Notifications.setNotificationHandler({
+   handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+   }),
+})
+
 export const AppProvider = ({ children }: AppProps) => {
    const [themes, setThemes] = React.useState<any>([])
    const [storyTopics, setStoryTopics] = React.useState<any>([])
@@ -15,7 +28,15 @@ export const AppProvider = ({ children }: AppProps) => {
    const [journalEntries, setJournalEntries] = React.useState<any>([])
    const [rawEpisodes, setRawEpisodes] = React.useState<any>([])
    const [allEpisodes, setAllEpisodes] = React.useState<any>([])
-   const [contentLoading, setContentLoading] = React.useState<boolean>(true);
+   const [contentLoading, setContentLoading] = React.useState<boolean>(true)
+
+   React.useEffect(() => {
+      const initNotificationService = async () => {
+         await registerForPushNotificationsAsync()
+      }
+
+      initNotificationService()
+   }, [])
 
    const AppContextObject = {
       themes,
@@ -39,7 +60,7 @@ export const AppProvider = ({ children }: AppProps) => {
       allEpisodes,
       setAllEpisodes,
       contentLoading,
-      setContentLoading
+      setContentLoading,
    }
 
    return <AppContext.Provider value={AppContextObject}>{children}</AppContext.Provider>
