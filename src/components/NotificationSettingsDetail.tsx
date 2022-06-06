@@ -25,7 +25,7 @@ import SwitchToggle from 'react-native-switch-toggle'
 import InsightIconSVG from './SVGs/InsightIconSVG'
 
 import DateTimePicker from '@react-native-community/datetimepicker'
-import Arrow from '../../assets/arrow.png'
+import Arrow from '../components/SVGs/Arrow'
 import { scheduleNotification } from '../lib/notifications'
 import { cancelAllScheduledNotificationsAsync } from 'expo-notifications'
 
@@ -226,18 +226,14 @@ const NotificationDetail = ({
                                        {label}
                                     </Text>
                                     {value === optionValue && (
-                                       <Image
+                                       <View
                                           style={tw.style(
                                              `${
                                                 optionValue === 'every-three-days' ? 'mr-1' : 'mr-3'
-                                             }`,
-                                             {
-                                                width: 20,
-                                                height: 7,
-                                             }
-                                          )}
-                                          source={Arrow}
-                                       />
+                                             }`
+                                          )}>
+                                          <Arrow />
+                                       </View>
                                     )}
                                  </Pressable>
                               ))}
