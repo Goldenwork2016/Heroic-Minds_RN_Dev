@@ -65,7 +65,6 @@ const NotificationDetail = ({
    const onScheduleReminder = async () => {
       const hour = reminder.getHours()
       const minute = reminder.getMinutes()
-
       let schedule = {}
 
       switch (value) {
@@ -123,7 +122,7 @@ const NotificationDetail = ({
    }
    const hour = reminder.getHours()
    const formatedHour = hour > 12 ? hour - 12 : hour
-   const minutes = reminder.getMinutes()
+   const minutes = String(reminder.getMinutes()).padStart(2, '0')
    const format = hour <= 11 ? 'AM' : 'PM'
 
    React.useEffect(() => {
