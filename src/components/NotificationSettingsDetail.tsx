@@ -25,7 +25,7 @@ import SwitchToggle from 'react-native-switch-toggle'
 import InsightIconSVG from './SVGs/InsightIconSVG'
 
 import DateTimePicker from '@react-native-community/datetimepicker'
-import Arrow from '../../assets/arrow.png'
+import Arrow from '../components/SVGs/Arrow'
 import { scheduleNotification } from '../lib/notifications'
 import { cancelAllScheduledNotificationsAsync } from 'expo-notifications'
 
@@ -65,7 +65,6 @@ const NotificationDetail = ({
    const onScheduleReminder = async () => {
       const hour = reminder.getHours()
       const minute = reminder.getMinutes()
-
       let schedule = {}
 
       switch (value) {
@@ -123,7 +122,7 @@ const NotificationDetail = ({
    }
    const hour = reminder.getHours()
    const formatedHour = hour > 12 ? hour - 12 : hour
-   const minutes = reminder.getMinutes()
+   const minutes = String(reminder.getMinutes()).padStart(2, '0')
    const format = hour <= 11 ? 'AM' : 'PM'
 
    React.useEffect(() => {
@@ -227,18 +226,14 @@ const NotificationDetail = ({
                                        {label}
                                     </Text>
                                     {value === optionValue && (
-                                       <Image
+                                       <View
                                           style={tw.style(
                                              `${
                                                 optionValue === 'every-three-days' ? 'mr-1' : 'mr-3'
-                                             }`,
-                                             {
-                                                width: 20,
-                                                height: 7,
-                                             }
-                                          )}
-                                          source={Arrow}
-                                       />
+                                             }`
+                                          )}>
+                                          <Arrow />
+                                       </View>
                                     )}
                                  </Pressable>
                               ))}
