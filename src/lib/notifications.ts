@@ -1,5 +1,6 @@
 import * as Notifications from 'expo-notifications'
 import { Alert, Platform } from 'react-native'
+
 export const registerForPushNotificationsAsync = async () => {
    let token
    const { status: existingStatus } = await Notifications.getPermissionsAsync()
@@ -32,8 +33,8 @@ export const registerForPushNotificationsAsync = async () => {
 export const scheduleNotification = async (schedule: any, mode: string, scheduleData: any) => {
    const id = await Notifications.scheduleNotificationAsync({
       content: {
-         title: 'Reminder! 📬',
-         body: 'Heroic Minds reminder',
+         title: 'Heroic Minds',
+         body: 'Invest in how you feel, think, perform 🏃‍♂️🧠',
          data: { data: { ...scheduleData, mode } },
       },
       trigger: {
